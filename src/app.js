@@ -50,7 +50,9 @@ app.post("/login", async (req, res) => {
       // create a JWT Token
       const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790");
       // Add the token to cookie and send the response back to the user
-      res.cookie("token", token);
+      res.cookie("token", token , {
+        expires: new Date(Date.now() + 8*3600000),
+      });
       res.send("Login Successfull");
     } else {
       throw new Error("Invalid Credentials");
@@ -67,6 +69,13 @@ app.get("/profile", userAuth, async (req, res) => {
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }
+});
+
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+  // Who is sending the connection Request
+  
+  console.log("Sending a connection request");
+  res.send(user.firstName + " Sent Connection Request ");
 });
 
 // Feed API - GET /feed - get all the users from the database
