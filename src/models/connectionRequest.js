@@ -24,6 +24,9 @@ const connectionRequestSchema = new mongoose.Schema(
   },
 );
 
+// Compound Indexing
+connectionRequestSchema.index({fromUserId: 1, toUserId: 1});
+
 // Pre()
 // Before i save /request/send/:status/:toUserId , this function will be called
 // Does not work with arrow function
