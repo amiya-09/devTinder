@@ -2,6 +2,7 @@ const express = require("express");
 const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 const User = require("../models/user");
 
 authRouter.post("/signup", async (req, res) => {
@@ -50,6 +51,27 @@ authRouter.post("/login", async (req, res) => {
     } else {
       throw new Error("Invalid Credentials");
     }
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
+authRouter.post("/forgot-password", async (req, res) => {
+  try {
+    const { emailId, newPassword } = req.body;
+    if (!emailId || !newPassword) {
+      throw new Error("emailId and newPassword are required");
+    }
+    if (!validator.isStrongPassword(newPassword)) {
+      throw new Error("Password is not strong enough");
+    }
+    const user = await User.findOne({ emailId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.send("Password reset successfully");
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }
