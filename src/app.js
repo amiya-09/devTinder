@@ -16,6 +16,7 @@ app.use(
   cors({
     origin: "http://localhost:5174",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
 app.use("/", authRouter);
